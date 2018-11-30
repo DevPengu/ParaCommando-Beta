@@ -1,0 +1,28 @@
+{
+  "name": "para-commando",
+  "version": "1.0.0",
+  "description": "ParaCommando Bot",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^2.0.1",
+    "chalk": "^2.4.1",
+    "discord.js": "github:discordjs/discord.js",
+    "discord.js-commando": "github:discordjs/Commando",
+    "express": "^4.16.4",
+    "moment": "^2.22.2",
+    "snekfetch": "^4.0.4",
+    "sqlite": "^3.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  }
+}
