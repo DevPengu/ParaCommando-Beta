@@ -5,11 +5,12 @@ const { MessageEmbed } = require('discord.js');
 const packageFile = require('../package.json');
 
 function levelUpEmbed(client, message, level) {
+  console.log(`${message.author.id} level up`);
   const embed = new MessageEmbed()
     .setTitle(message.author.username)
-    .setDescription(`**CONGRATS**\nYou are now level **${level}**!!!`)
+    .setDescription(`**CONGRATS**\nYou are now level **${level}**!`)
     .setColor('GREEN')
-    .setThumbnail(message.author.displayAvatarURL);
+    .setThumbnail(message.author.displayAvatarURL());
   message.channel.send({ embed });
 }
 
@@ -31,9 +32,9 @@ module.exports = (client) => {
       client.scoreSystem(client, message);
       xpTalkedRecently.add(message.author.id);
       setTimeout(() => {
-        // Removes the user from the set after 2.5 seconds
+        // Removes the user from the set after 5 min
         xpTalkedRecently.delete(message.author.id);
-      }, 4); // 4000
+      }, 300000);
     });
   };
 
@@ -148,6 +149,7 @@ module.exports = (client) => {
   client.version = packageFile.version;
 
   // These 2 process methods will catch exceptions and give *more details* about the error and stack trace.
+  /*
   process.on('uncaughtException', (err) => {
     const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
     client.log.error(`Uncaught Exception: ${errorMsg}`);
@@ -156,5 +158,5 @@ module.exports = (client) => {
 
   process.on('unhandledRejection', (err) => {
     client.log.error(`Unhandled rejection: ${err}`);
-  });
+  });*/
 };

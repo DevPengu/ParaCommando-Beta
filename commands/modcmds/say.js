@@ -30,6 +30,9 @@ module.exports = class SayCommand extends Command {
   }
 
   run(msg, { text }) {
+    if(msg.channel.type != 'dm'){
+      this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    } else this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in a DM channel`)
     msg.delete();
     msg.say(text);
   }

@@ -37,6 +37,9 @@ module.exports = class WarnsCommand extends Command {
   }
 
   async run(msg, { user, incident }) {
+    if(msg.channel.type != 'dm'){
+      this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    } else this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in a DM channel`)
     this.client.sql.get(`SELECT * FROM guildMembers WHERE guildID = '${msg.guild.id}' AND userID = '${user.id}'`).then(async (row) => {
       if (!row) {
         row = { warns: 0 };
@@ -57,20 +60,3 @@ module.exports = class WarnsCommand extends Command {
     });
   }
 };
-
-/*   async run(msg, { user, incident }) {
-    const userWarn = await this.client.sql.get(`SELECT * FROM guildMembers WHERE guildID = '${msg.guild.id}' AND userID = '${user.id}'`);
-    const { warns } = userWarn;
-    if (!incident) {
-      return msg.say(`This user has ${warns} warnings.\n\nTo check an incident, type c?warns @${user.tag} [incident number here]`);
-    }
-    const reasons = await this.covertStringToArray(userWarn.warnReason);
-    if (!reasons[incident - 1]) {
-      return msg.say(`Incident does not exist, please choice between 1 - ${reasons.length}`);
-    }
-    const iEmbed = new MessageEmbed()
-      .setColor('BLUE')
-      .setTitle(`${user.username} | Incident #${incident}`)
-      .setDescription(`Incident #${incident} reason: \n**${reasons[incident - 1]}**`);
-    return msg.say(iEmbed);
-  } */

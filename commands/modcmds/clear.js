@@ -29,6 +29,9 @@ module.exports = class ClearCommand extends Command {
   }
 
   run(msg, { amount }) {
+    if(msg.channel.type != 'dm'){
+      this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    } else this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in a DM channel`)
     msg.delete();
     msg.channel.bulkDelete(amount).catch(err => msg.say(err.message));
     msg.say(`Cleared ${amount} messages...`).then(m => m.delete({ timeout: 5000 }));

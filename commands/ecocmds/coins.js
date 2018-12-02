@@ -31,6 +31,7 @@ module.exports = class CoinsCommand extends Command {
   }
 
   async run(msg, { user }) {
+    this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
     if (!user) {
       const c = await this.client.sql.get(`SELECT coins FROM guildMembers WHERE guildID = '${msg.guild.id}' AND userID = '${msg.author.id}'`);
       this.embed(msg.author, msg, c.coins);

@@ -37,6 +37,9 @@ module.exports = class SetCommand extends Command {
   }
 
   run(msg, { type, amount, user }) {
+    if(msg.channel.type != 'dm'){
+      this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    } else this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in a DM channel`)
     let gUser = user;
     if (!gUser) gUser = msg.author;
 

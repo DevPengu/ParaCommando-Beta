@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
-const { parseUser } = require('../../modules/parseUser.js');
-const { createMuted } = require('../../modules/createMuted.js');
+const { parseUser } = require('../../util/parseUser.js');
+// const { createMuted } = require('../../util/createMuted.js');
 
 module.exports = class WarnCommand extends Command {
   constructor(client) {
@@ -49,29 +49,37 @@ module.exports = class WarnCommand extends Command {
   }
 
   async run(msg, { user, reason }) {
+    if(msg.channel.type != 'dm'){
+      this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    } else this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in a DM channel`)
     const settings = await this.client.sql.get(`SELECT * FROM guildSettings WHERE guildID = '${msg.guild.id}'`);
-    const logChannel = msg.guild.channels.find('name', msg.settings.modLogChannel);
-    if (!logChannel) return msg.channel.send(`Could not locate ${msg.settings.modLogChannel} channel!\nPlease create a channel called ${msg.settings.modLogChannel}`);
+    const logChannel = msg.guild.channels.find(channel => channel.name === settings.modLogChannel);
+    if (!logChannel) return msg.channel.send(`Could not locate ${settings.modLogChannel} channel!\nPlease create a channel called ${settings.modLogChannel}`);
     const parseChecker = parseUser(msg, user);
     if (parseChecker === true) return false;
-    let muteRole = msg.guild.roles.find('name', 'Muted');
-    if (!muteRole) {
-      muteRole = await createMuted(muteRole, this.client, msg);
-    }
+    // let muteRole = msg.guild.roles.find(role => role.name === 'Muted');
+    // if (!muteRole) {
+    //  muteRole = await createMuted(muteRole, this.client, msg);
+    // }
     msg.delete().catch((e) => { this.client.log.warn(e); });
 
     const userWarn = await this.client.sql.get(`SELECT * FROM guildMembers WHERE guildID = '${msg.guild.id}' AND userID = '${user.id}'`);
 
-    console.log(`This is simple: ${userWarn.warnReason}__,__${reason}`);
-    const warnings = userWarn.warns + 1;
-    const warnReason = await this.covertStringToArray(userWarn.warnReason);
-    warnReason.push(reason);
-    const newWarnReason = await this.convertArrayToString(warnReason);
-    console.log(`This is complicated: ${newWarnReason}`);
-    this.client.sql.run(`UPDATE guildMembers SET warns = ${warnings}, warnReason = '${newWarnReason}' WHERE guildID = '${msg.guild.id}' AND userID = '${user.id}'`);
+    let warnings = 1;
+    let newWarnReason = reason;
+    if (userWarn.warns > 0) {
+      newWarnReason = `${userWarn.warnReason}__,__${reason}`;
+      this.client.log.log(`This is simple: ${newWarnReason}`);
+      warnings += userWarn.warns;
+      // const warnReason = await this.covertStringToArray(userWarn.warnReason);
+      // warnReason.push(reason);
+      // newWarnReason = await this.convertArrayToString(warnReason);
+      // console.log(`This is complicated: ${newWarnReason}`);
+    }
+    await this.client.sql.run(`UPDATE guildMembers SET warns = ${warnings}, warnReason = '${newWarnReason}' WHERE guildID = '${msg.guild.id}' AND userID = '${user.id}'`);
 
     const embed = new MessageEmbed()
-      .setAuthor(`Warned | ${user.tag} (${user.id})`, 'https://cdn.discordapp.com/emojis/453834984415821845.png?v=1')
+      .setAuthor(`Warned | ${user.tag} (${user.id})`)
       .setColor('BLUE')
       .setDescription('   ‍   ')
       .addField('User', `${user.tag}`, true)

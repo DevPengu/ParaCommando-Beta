@@ -15,10 +15,31 @@ const applyText = (canvas, text) => {
 };
 
 module.exports = async (client, member) => {
+  // return;
   // add user to the database
-  client.sql.run('INSERT INTO guildMembers (guildID, userID) VALUES (?,?)', [member.guild.id, member.user.id]);
+  // client.sql.run('INSERT INTO guildMembers (guildID, userID) VALUES (?,?)', [member.guild.id, member.user.id]);
 
-  if (member.guild.id !== '509877095988723743') return;
+  /*let opt = client.sql.get(`SELECT welcomeEnable FROM guildSettings WHERE guildID = '${member.guild.id}'`);
+  let roleopt = client.sql.get(`SELECT autoRoleID FROM guildSettings WHERE guildID = '${member.guild.id}'`)
+  if(roleopt.autoRoleID){
+    member.roles.add(roleopt.autoRoleID);
+  }
+  if(!opt.welcomeEnable) return;
+  const chan = client.sql.get(`SELECT welcomeChannel FROM guildSettings WHERE guildID = ${member.guild.id}`);
+  const channel = member.guild.channels.get(chan.welcomeChannel);
+  if(!chan.welcomeChannel) return; */
+  
+  const guildSettings = await client.sql.get(`SELECT * FROM guildSettings WHERE guildID = '${member.guild.id}'`);
+  if (!guildSettings) return;
+  if (guildSettings.autoRole === 1) {
+    const role = await member.guild.roles.get(guildSettings.autoRoleID);
+    member.roles.add(role);
+  }
+  if (!guildSettings.welcomeEnable) return;
+  const channel = member.guild.channels.get(guildSettings.welcomeChannel);
+  if (!guildSettings.welcomeChannel) return;
+
+  // if (member.guild.id !== '509877095988723743') return;
   const canvas = Canvas.createCanvas(800, 333);
   const ctx = canvas.getContext('2d');
   const image = [
@@ -70,9 +91,6 @@ module.exports = async (client, member) => {
   ctx.drawImage(avatar, 534, 66, 200, 200);
   //
 
-  const channel = member.guild.channels.get('510238784516915210');
-
   const attachment = new MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
-  channel.send('<@&514958519246520332>', attachment);
-  member.roles.add('510219747887939585');
+  channel.send(attachment);
 };

@@ -38,16 +38,17 @@ module.exports = class GambleCommand extends Command {
     msg.say(e);
   }
 
-  run(msg, { amount }) {
-    const currCoins = this.client.sql.get(`SELECT coins FROM guildMembers WHERE guildID = '${msg.guild.id}' AND userID = '${msg.author.id}'`);
-    if (currCoins < amount) return msg.say(`You dont have enough coins. Current coins ${currCoins}`);
+  async run(msg, { amount }) {
+    this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    const currCoins = await this.client.sql.get(`SELECT coins FROM guildMembers WHERE guildID = '${msg.guild.id}' AND userID = '${msg.author.id}'`);
+    if (currCoins.coins < amount) return msg.say(`You dont have enough coins. Current coins ${currCoins.coins}`);
     const chance = Math.random();
 
     if (chance >= 0.45) {
-      this.client.sql.run(`UPDATE guildMembers SET coins = coins + ${amount} WHERE guildID = '${msg.guild.id}' AND userID = '${msg.author.id}'`);
+      await this.client.sql.run(`UPDATE guildMembers SET coins = ${currCoins.coins + amount} WHERE guildID = '${msg.guild.id}' AND userID = '${msg.author.id}'`);
       return this.embed(msg, amount, 'GREEN', '+', 'Congratulations, you won the bet!');
     }
-    this.client.sql.run(`UPDATE guildMembers SET coins = coins - ${amount} WHERE guildID = '${msg.guild.id}' AND userID = '${msg.author.id}'`);
+    await this.client.sql.run(`UPDATE guildMembers SET coins = ${currCoins.coins - amount} WHERE guildID = '${msg.guild.id}' AND userID = '${msg.author.id}'`);
     return this.embed(msg, amount, 'RED', '-', 'Unfortunately, you lost the bet!');
   }
 };

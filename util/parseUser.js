@@ -7,7 +7,7 @@ exports.parseUser = (message, user) => {
     return parse;
   } if (member) {
     parse = true;
-    if (member.highestRole.position >= message.member.highestRole.position) {
+    if (member.roles.highest.position >= message.member.roles.highest.position) {
       message.channel.send('The targeted member has a higher or equal role position than you.');
       return parse;
     }

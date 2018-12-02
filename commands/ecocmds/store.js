@@ -32,6 +32,7 @@ module.exports = class StoreCommand extends Command {
   }
 
   async run(msg) {
+    this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
     const userStats = await this.client.sql.get(`SELECT coins, uLevel FROM guildMembers WHERE guildID = '${msg.guild.id}' AND userID = '${msg.author.id}'`);
     const userCoins = userStats.coins;
     const userLevel = userStats.uLevel;

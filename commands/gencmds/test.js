@@ -14,7 +14,7 @@ const { MessageAttachment } = require('discord.js');
 const Canvas = require('canvas');
 const snekfetch = require('snekfetch');
 
-module.exports = class ReplyCommand extends Command {
+module.exports = class TestCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'test',
@@ -44,6 +44,9 @@ module.exports = class ReplyCommand extends Command {
   }
 
   async run(msg) {
+    if(msg.channel.type != 'dm'){
+      this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    } else this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in a DM channel`)
     // msg.say('No test code is currently active, try again later.')
     const canvas = Canvas.createCanvas(800, 333);
     const ctx = canvas.getContext('2d');
