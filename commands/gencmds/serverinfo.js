@@ -15,6 +15,9 @@ module.exports = class ServerInfoCommand extends Command {
   }
 
   run(msg) {
+    if(msg.channel.type != 'dm'){
+      this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    } else this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in a DM channel`)
     const mCount = msg.guild.members.filter(mem => !mem.user.bot);
     const bCount = msg.guild.members.filter(mem => mem.user.bot);
 

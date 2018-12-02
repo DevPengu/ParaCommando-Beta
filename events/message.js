@@ -17,7 +17,9 @@ async function msgReward(client, message, cUser, messages, coins) {
 }
 
 module.exports = async (client, message) => {
-  if (message.author.id === client.user.id) return;
+  if(!client.isOwner(message.author.id)) return;
+  if(message.guild.id === '264445053596991498') return;
+  if (message.author.bot) return;
   // if (message.guild.id !== '509877095988723743') return;
   if (message.channel.id === '510244534203056128') {
     if (message.content !== 'accept') message.delete();
@@ -31,7 +33,7 @@ module.exports = async (client, message) => {
   // Had to disable this event in DM since it trows alot of errors since you are trying to grap guild.id - Pengu
   if (message.channel.type === 'dm') return;
 
-  let settings = client.sql.get(`SELECT * FROM guildSettings WHERE guildID = '${message.guild.id}'`);
+  let settings = await client.sql.get(`SELECT * FROM guildSettings WHERE guildID = '${message.guild.id}'`);
   if (!settings) {
     await client.sql.run('INSERT INTO guildSettings (guildID, prefix) VALUES (?,?)', [message.guild.id, 'c?']);
     settings = await client.sql.get(`SELECT * FROM guildSettings WHERE guildID = '${message.guild.id}'`);
@@ -55,7 +57,7 @@ module.exports = async (client, message) => {
 
   await client.sql.get(`SELECT * FROM guildMembers WHERE guildID = '${message.guild.id}' AND userID = '${message.author.id}'`).then(async (row) => {
     if (!row) {
-      await client.sql.run('INSERT INTO guildMembers (guildID, userID, coins, messages) VALUES (?,?,?,?)', [message.guild.id, message.author.id, amount, msgAmount]);
+      await client.sql.run('INSERT INTO guildMembers (guildID, userID, coins, messages) VALUES (?,?,?,?)', [message.guild.id, message.author.id, newCoins, msgAmount]);
     } else {
       msgAmount += row.messages;
       newCoins += row.coins;

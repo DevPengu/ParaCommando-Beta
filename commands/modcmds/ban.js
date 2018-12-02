@@ -27,6 +27,9 @@ module.exports = class BanCommand extends Command {
   }
 
   run(msg, { user, reason }) {
+    if(msg.channel.type != 'dm'){
+      this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    } else this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in a DM channel`)
     const e = new MessageEmbed()
       .setColor('RED')
       .setTitle('User Ban')

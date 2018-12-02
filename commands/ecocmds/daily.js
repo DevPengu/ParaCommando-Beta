@@ -18,6 +18,7 @@ module.exports = class DailyCommand extends Command {
   }
 
   async run(msg) {
+    this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
     // return msg.say('This command is under maintenance, please try again later.')
     this.client.sql.run(`UPDATE guildMembers SET coins = coins + 15 WHERE guildID = '${msg.guild.id}' AND userID = '${msg.author.id}'`);
 

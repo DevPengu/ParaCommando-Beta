@@ -1,15 +1,20 @@
-const { MessageEmbed } = require('discord.js');
-const { CommandoClient } = require('discord.js-commando');
+// const { MessageEmbed } = require('discord.js');
+const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
 const { promisify } = require('util');
 const readdir = promisify(require('fs').readdir);
 const express = require('express');
 const path = require('path');
+const sqlite = require('sqlite')
 
 const app = express();
 app.get('/', (request, response) => {
   response.sendStatus(200);
 });
 app.listen(process.env.PORT);
+
+sqlite.open(path.join(__dirname, "settings.sqlite3")).then((db) => {
+    client.setProvider(new SQLiteProvider(db));
+});
 
 /*
 Steps for images:
@@ -20,7 +25,7 @@ Steps for images:
 
 const client = new CommandoClient({
   commandPrefix: 'c?',
-  owner: ['429317161354526732', '300097311038504961', '175699560293728256'],
+  owner: ['300097311038504961', '175699560293728256'],
   disableEveryone: true,
   unknownCommandResponse: false,
 });
@@ -33,6 +38,7 @@ client.registry
     ['ecocmds', 'Economy Commands'],
     ['funcmds', 'Fun Commands'],
     ['rolecmds', 'Role Commands'],
+    ['levelcmds', 'Level Commands'],
   ])
   .registerDefaultGroups()
   .registerDefaultCommands({
@@ -43,7 +49,7 @@ client.registry
 
 client.sql = require('sqlite');
 client.config = require('./config.js');
-client.log = require('./modules/Logger');
+client.log = require('./util/Logger');
 require('./modules/functions.js')(client);
 
 client.sql.open('./database.sqlite');
@@ -63,49 +69,11 @@ const disabled = [
   '509877095988723743',
 ];
 
-// Make this into a command to remove it from server
 client.dispatcher.addInhibitor((msg) => {
-  if (!client.isOwner(msg.author.id)) {
-    if (msg.channel.type !== 'dm') {
-      if (msg.guild.id !== '509877095988723743') {
-        const e = new MessageEmbed()
-          .setColor('RED')
-          .setFooter('Commands are currently disabled in all guilds, sorry for the inconvenience.');
-
-        return msg.say(e).then(m => m.delete({ timeout: 10000 }));
-      }
-    }
-  }
-});
-
-// Make this into a command to remove it from server
-// write me in discord if you need any chanches or commands :) -OptimusBrime/TheLPCheat
-
-// client.dispatcher.addInhibitor(msg => {
-//   if(blacklistedUsers.includes(msg.author.id)) {
-//     let e = new MessageEmbed()
-//     .setColor('RED')
-//     .setFooter(`${msg.author.username}, you may not use this bots commands, you are blacklisted!`)
-
-//     return msg.say(e).then(m => m.delete({ timeout: 10000 }));
-//   }
-
-// });
-
-// Make this into a command to remove it from server
-client.dispatcher.addInhibitor((msg) => {
-  if (!client.isOwner(msg.author.id)) {
-    if (msg.channel.id !== '511060767194218498') {
-      if (msg.channel.type !== 'dm') {
-        const e = new MessageEmbed()
-          .setColor('RED')
-          .setFooter('Please use commands in the appropriate channel!');
-
-        return msg.say(e).then(m => m.delete({ timeout: 10000 }));
-      }
-    }
-  }
-});
+  // if(msg.guild.id === '264445053596991498') return;
+  if(!client.isOwner(msg.author.id)) return msg.say(`${client.user.username} is currently under maintenance, sorry for the inconvenience.`);
+})
+//
 
 const init = async () => {
   const evtFiles = await readdir('./events/');

@@ -26,22 +26,22 @@ module.exports = class HelpCommand extends Command {
   }
 
   run(msg, { type }) {
-    const gencmds = this.client.registry.findGroups('gencmds', true);
-    const ecocmds = this.client.registry.findGroups('ecocmds', true);
-    const rolecmds = this.client.registry.findGroups('rolecmds', true);
-    const modcmds = this.client.registry.findGroups('modcmds', true);
-    const cstate = this.client.registry.findGroups('commands', true);
-    const utils = this.client.registry.findGroups('util', true);
+    if(msg.channel.type != 'dm'){
+      this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    } else this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in a DM channel`)
+    const cmdGroups = this.client.registry.groups.map(g => g.id);
+    const test2 = this.client.registry.groups.map(g => g.commands);
 
-    if (!type) return msg.reply('Please choose from: \ngen \neco \nrole \nmod \ncstate (disable/enable commands + usage) \nutil (ping, help, etc) \n \nAlternatively, you could add a command name (c?help <command>), to get more specific information on a command.');
+    if (cmdGroups.includes(type)) {
+      const test = cmdGroups.indexOf(type);
+      const cmds = test2[test].map(c => c);
 
-    if (type === 'gen') {
       const e = new MessageEmbed()
         .setColor('BLUE')
         .setTitle(`${this.client.user.username} General Commands`)
         .setDescription(`To use commands in a guild, do \`${this.client.commandPrefix} command\` \nTo use commands in this DM, do the same, without a prefix.`);
 
-      gencmds[0].commands.forEach((elem) => {
+      cmds.forEach((elem) => {
         if (!this.client.isOwner(msg.author.id)) {
           if (elem.ownerOnly) return;
         }
@@ -49,117 +49,34 @@ module.exports = class HelpCommand extends Command {
         if (elem.guildOnly) end = ' (Guild Only).';
         e.addField(elem.name, `${elem.description}${end}`);
       });
-      msg.direct(e);
       if (msg.channel.type !== 'dm') msg.reply('check your DMs!');
+      return msg.direct(e);
     }
-
-    if (type === 'eco') {
-      const e = new MessageEmbed()
-        .setColor('BLUE')
-        .setTitle(`${this.client.user.username} Economy Commands`)
-        .setDescription(`To use commands in a guild, do \`${this.client.commandPrefix} command\` \nTo use commands in this DM, do the same, without a prefix.`);
-
-      ecocmds[0].commands.forEach((elem) => {
-        if (!this.client.isOwner(msg.author.id)) {
-          if (elem.ownerOnly) return;
-        }
-        let end = '.';
-        if (elem.guildOnly) end = ' (Guild Only).';
-        e.addField(elem.name, `${elem.description}${end}`);
-      });
-      msg.direct(e);
-      if (msg.channel.type !== 'dm') msg.reply('check your DMs!');
+    let com;
+    if (type !== '') {
+      com = this.client.registry.findCommands(type, true);
     }
-
-    if (type === 'role') {
-      const e = new MessageEmbed()
-        .setColor('BLUE')
-        .setTitle(`${this.client.user.username} Role Commands`)
-        .setDescription(`To use commands in a guild, do \`${this.client.commandPrefix} command\` \nTo use commands in this DM, do the same, without a prefix.`);
-
-      rolecmds[0].commands.forEach((elem) => {
-        if (!this.client.isOwner(msg.author.id)) {
-          if (elem.ownerOnly) return;
-        }
-        let end = '.';
-        if (elem.guildOnly) end = ' (Guild Only).';
-        e.addField(elem.name, `${elem.description}${end}`);
-      });
-      msg.direct(e);
-      if (msg.channel.type !== 'dm') msg.reply('check your DMs!');
+    if (!com) {
+      return msg.reply(`Please choose from:\n${cmdGroups.join('\n')}\n\nAlternatively, you could add a command name (c?help <command>), to get more specific information on a command.`);
     }
+    if (!com[0]) return msg.reply('There is no command with this name');
 
-    if (type === 'mod') {
-      const e = new MessageEmbed()
-        .setColor('BLUE')
-        .setTitle(`${this.client.user.username} Moderation Commands`)
-        .setDescription(`To use commands in a guild, do \`${this.client.commandPrefix} command\` \nTo use commands in this DM, do the same, without a prefix.`);
+    const e = new MessageEmbed()
+      .setColor('BLUE')
+      .setTitle(`__**${com[0].name}**__ Command Information`)
+      .addField('Description', com[0].description)
+      .setFooter('This command does not include NSFW elements.');
+    if (com[0].guildOnly) e.setTitle(`__**${com[0].name}**__ Command Information (Guild Only)`);
+    if (com[0].ownerOnly) e.setTitle(`__**${com[0].name}**__ Command Information (Owner Only)`);
+    if (!com[0].aliases.length <= 0) e.addField('Aliases', com[0].aliases.map(a => a).join(', '));
+    if (com[0].details) e.addField('Details', com[0].details);
+    if (com[0].format != null) e.addField('Format', `${this.client.commandPrefix}${com[0].name} ${com[0].format}`);
+    else e.addField('Format', `${this.client.commandPrefix}${com[0].name}`);
+    e.addField('Examples', com[0].examples.map(ex => ex));
+    if (com[0].throttling != null) e.addField('Cooldown', `You may use this command ${com[0].throttling.usages} time(s) in ${com[0].throttling.duration} second(s).`);
+    if (com[0].nsfw) e.setFooter('This command includes NSFW elements!');
 
-      modcmds[0].commands.forEach((elem) => {
-        if (!this.client.isOwner(msg.author.id)) {
-          if (elem.ownerOnly) return;
-        }
-        let end = '.';
-        if (elem.guildOnly) end = ' (Guild Only).';
-        e.addField(elem.name, `${elem.description}${end}`);
-      });
-      msg.direct(e);
-      if (msg.channel.type !== 'dm') msg.reply('check your DMs!');
-    }
-
-    if (type === 'cstate') {
-      const e = new MessageEmbed()
-        .setColor('BLUE')
-        .setTitle(`${this.client.user.username} Command State`)
-        .setDescription(`To use commands in a guild, do \`${this.client.commandPrefix} command\` \nTo use commands in this DM, do the same, without a prefix. \n \nThese commands are used to disable (or enable) unwanted commands.`);
-
-      cstate[0].commands.forEach((elem) => {
-        if (!this.client.isOwner(msg.author.id)) {
-          if (elem.ownerOnly) return;
-        }
-        e.addField(elem.name, `${elem.description}`);
-      });
-      msg.direct(e);
-      if (msg.channel.type !== 'dm') msg.reply('check your DMs!');
-    }
-
-    if (type === 'util') {
-      const e = new MessageEmbed()
-        .setColor('BLUE')
-        .setTitle(`${this.client.user.username} Utility Commands`)
-        .setDescription(`To use commands in a guild, do \`${this.client.commandPrefix} command\` \nTo use commands in this DM, do the same, without a prefix. \n \nThese commands are used to disable (or enable) unwanted commands.`);
-
-      utils[0].commands.forEach((elem) => {
-        if (!this.client.isOwner(msg.author.id)) {
-          if (elem.ownerOnly) return;
-        }
-        e.addField(elem.name, `${elem.description}`);
-      });
-      msg.direct(e);
-      if (msg.channel.type !== 'dm') msg.reply('check your DMs!');
-    }
-
-    const opts = ['gen', 'eco', 'role', 'mod', 'cstate', 'util'];
-    if (!opts.includes(type)) {
-      const com = this.client.registry.findCommands(type, true);
-      if (com.length <= 0) return msg.say('Please choose from: \ngen \neco \nrole \nmod \ncstate (disable/enable commands + usage) \nutil (ping, help, etc) \n \nAlternatively, you could add a command name (c?help <command>), to get more specific information on a command.');
-      console.log(com);
-      const e = new MessageEmbed();
-      e.setColor('BLUE');
-      e.setTitle(`__**${com[0].name}**__ Command Information`);
-      if (com[0].guildOnly) e.setTitle(`__**${com[0].name}**__ Command Information (Guild Only)`);
-      if (com[0].ownerOnly) e.setTitle(`__**${com[0].name}**__ Command Information (Owner Only)`);
-      if (!com[0].aliases.length <= 0) e.addField('Aliases', com[0].aliases.map(a => a).join(', '));
-      e.addField('Description', com[0].description);
-      if (com[0].format != null) e.addField('Format', `${this.client.commandPrefix}${com[0].name} ${com[0].format}`);
-      else e.addField('Format', `${this.client.commandPrefix}${com[0].name}`);
-      e.addField('Examples', com[0].examples.map((e) => e));
-      if (com[0].throttling != null) e.addField('Cooldown', `You may use this command ${com[0].throttling.usages} time(s) in ${com[0].throttling.duration} second(s).`);
-      if (com[0].nsfw) e.setFooter('This command includes NSFW elements!');
-      else e.setFooter('This command does not include NSFW elements.');
-
-      msg.direct(e);
-      if (msg.channel.type !== 'dm') msg.reply('check your DMs!');
-    }
+    if (msg.channel.type !== 'dm') msg.reply('check your DMs!');
+    return msg.direct(e);
   }
 };

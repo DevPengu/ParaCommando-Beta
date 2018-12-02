@@ -8,10 +8,10 @@ module.exports = class StaffInfoCommand extends Command {
       aliases: ['staff', 'staff-info'],
       group: 'gencmds',
       memberName: 'staffinfo',
-      description: 'Information on the current staff members',
+      description: 'Information about the current support server staff',
       examples: ['staffinfo', 'staff-info'],
       ownerOnly: true,
-      guildOnly: false,
+      guildOnly: true,
       permissions: [],
       clientPermissions: [],
       args: [],
@@ -19,34 +19,38 @@ module.exports = class StaffInfoCommand extends Command {
   }
 
   run(msg) {
+    if(msg.channel.type != 'dm'){
+      this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in Server: ${msg.guild.name} (${msg.guild.id})`);
+    } else this.client.log.log(`${this.name} was used by ${msg.author.tag} (${msg.author.id}) in a DM channel`)
     //
-    let owners = msg.guild.roles.get('509878112390086661').members;
+    let owners = this.client.guilds.get('509877095988723743').roles.get('509878112390086661').members;
     if (owners.size === 0) owners = 'No members currently hold this position!';
     else owners = owners.map(m => m.user.tag);
     //
-    let devs = msg.guild.roles.get('512702720352976896').members;
+    let devs = this.client.guilds.get('509877095988723743').roles.get('512702720352976896').members;
     if (devs.size === 0) devs = 'No members currently hold this position!';
     else devs = devs.map(m => m.user.tag);
     //
-    let admins = msg.guild.roles.get('510207358925013003').members;
+    let admins = this.client.guilds.get('509877095988723743').roles.get('510207358925013003').members;
     if (admins.size === 0) admins = 'No members currently hold this position!';
     else admins = admins.map(m => m.user.tag);
     //
-    let mods = msg.guild.roles.get('509885307794227221').members;
+    let mods = this.client.guilds.get('509877095988723743').roles.get('509885307794227221').members;
     if (mods.size === 0) mods = 'No members currently hold this position!';
     else mods = mods.map(m => m.user.tag);
     //
-    let helpers = msg.guild.roles.get('510208363481792527').members;
+    let helpers = this.client.guilds.get('509877095988723743').roles.get('510208363481792527').members;
     if (helpers.size === 0) helpers = 'No members currently hold this position!';
     else helpers = helpers.map(m => m.user.tag);
     //
-    let man = msg.guild.roles.get('510210941107830784').members;
+    let man = this.client.guilds.get('509877095988723743').roles.get('510210941107830784').members;
     if (man.size === 0) man = 'No members currently hold this position!';
     else man = man.map(m => m.user.tag);
 
     const e = new MessageEmbed()
       .setColor('BLUE')
-      .setAuthor(`${msg.guild.name} Staff Information`)
+      .setTitle('ParaPlazza Staff Information')
+      .setDescription('This is information about the support team in [ParaPlazza](https://discordapp.com/invite/c36U6wv) (this bots support server)')
       .addField('Owners', owners, true)
       .addField('Developers', devs, true)
       .addField('Admins', admins)
