@@ -91,6 +91,6 @@ module.exports = async (client, member) => {
   ctx.drawImage(avatar, 534, 66, 200, 200);
   //
 
-  const attachment = new MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
+  const attachment = new MessageAttachment(canvas.toBuffer(), `welcome_to_${member.guild.name}.png`);
   channel.send(attachment);
 };
