@@ -1,6 +1,7 @@
 dependencies:
   canvas: 2.1.0
   chalk: 2.4.1
+  common-tags: 1.8.0
   discord.js: github.com/discordjs/discord.js/ecaec29380d31dcd94a30b4242bf26c5e4c395f7
   discord.js-commando: github.com/discordjs/Commando/5c1b4da3f1b0d98334ff2e39d1731348c266bd31
   express: 4.16.4
@@ -2158,7 +2159,6 @@ packages:
     dev: false
     name: prism-media
     resolution:
-      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/amishshah/prism-media/tar.gz/1e336c9a20dd0928ef3bdc2075ab58d1521fb323'
     version: 0.3.1
   github.com/discordjs/Commando/5c1b4da3f1b0d98334ff2e39d1731348c266bd31:
@@ -2175,7 +2175,6 @@ packages:
       discord.js: ^12.0.0
       sqlite: ^3.0.0
     resolution:
-      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/discordjs/Commando/tar.gz/5c1b4da3f1b0d98334ff2e39d1731348c266bd31'
     version: 0.11.0-dev
   github.com/discordjs/discord.js/ecaec29380d31dcd94a30b4242bf26c5e4c395f7:
@@ -2199,7 +2198,6 @@ packages:
       sodium: ^2.0.3
       zlib-sync: ^0.1.4
     resolution:
-      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/discordjs/discord.js/tar.gz/ecaec29380d31dcd94a30b4242bf26c5e4c395f7'
     version: 12.0.0-dev
 registry: 'https://registry.npmjs.org/'
@@ -2208,8 +2206,9 @@ shrinkwrapVersion: 3
 specifiers:
   canvas: ^2.0.1
   chalk: ^2.4.1
-  discord.js: 'github:discordjs/discord.js'
-  discord.js-commando: 'github:discordjs/Commando'
+  common-tags: ^1.8.0
+  discord.js: 'github:discordjs/discord.js#master'
+  discord.js-commando: 'github:discordjs/Commando#master'
   eslint: ^5.9.0
   eslint-config-airbnb-base: ^13.1.0
   eslint-plugin-import: ^2.14.0

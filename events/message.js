@@ -17,7 +17,9 @@ async function msgReward(client, message, cUser, messages, coins) {
 }
 
 module.exports = async (client, message) => {
-  if(!client.isOwner(message.author.id)) return;
+  // if(!client.isOwner(message.author.id)) return;
+  // console.log(message)
+  if (message.channel.type === 'dm') return;
   if(message.guild.id === '264445053596991498') return;
   if (message.author.bot) return;
   // if (message.guild.id !== '509877095988723743') return;

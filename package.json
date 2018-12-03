@@ -13,13 +13,14 @@
   "dependencies": {
     "canvas": "^2.0.1",
     "chalk": "^2.4.1",
-    "discord.js": "github:discordjs/discord.js",
-    "discord.js-commando": "github:discordjs/Commando",
+    "discord.js": "discordjs/discord.js#master",
+    "discord.js-commando": "discordjs/Commando#master",
     "express": "^4.16.4",
     "moment": "^2.22.2",
     "snekfetch": "^4.0.4",
     "sqlite": "^3.0.0",
-    "oneline": "^1.0.0"
+    "oneline": "^1.0.0",
+    "common-tags": "^1.8.0"
   },
   "devDependencies": {
     "eslint": "^5.9.0",

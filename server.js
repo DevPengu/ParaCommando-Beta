@@ -44,6 +44,7 @@ client.registry
   .registerDefaultCommands({
     help: false,
     ping: false,
+    prefix: false,
   })
   .registerCommandsIn(path.join(__dirname, 'commands'));
 
@@ -69,10 +70,10 @@ const disabled = [
   '509877095988723743',
 ];
 
-client.dispatcher.addInhibitor((msg) => {
-  // if(msg.guild.id === '264445053596991498') return;
-  if(!client.isOwner(msg.author.id)) return msg.say(`${client.user.username} is currently under maintenance, sorry for the inconvenience.`);
-})
+// client.dispatcher.addInhibitor((msg) => {
+//   // if(msg.guild.id === '264445053596991498') return;
+//   if(!client.isOwner(msg.author.id)) return msg.say(`${client.user.username} is currently under maintenance, sorry for the inconvenience.`);
+// })
 //
 
 const init = async () => {
